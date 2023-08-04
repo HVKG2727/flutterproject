@@ -65,6 +65,36 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
+
+            Container(
+              child:  Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                 const Text("Not register please SignUp"),
+                TextButton(
+                  onPressed: () async {
+                      try {
+                           await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                          email: emailController.text.trim(),
+                           password: passwordController.text.trim(),
+                            );
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Homepage()));
+                              Fluttertoast.showToast(msg: 'SignUp successfully');
+
+                      } catch (e) {
+                              print('Error while signingUp up: $e');
+                              Fluttertoast.showToast(msg: 'Error while signingUp in: $e');
+                              // if (e.hashCode == 'user-not-found') {
+                              //   Fluttertoast.showToast(msg: "User not found. Please register or check your credentials.");
+                              // } else {
+                              //   Fluttertoast.showToast(msg: "Login failed: $e");
+                              // }
+                      }
+                      },
+                      child: Text("SignUp"))
+                ],
+              ),
+            ),
             ElevatedButton(
               onPressed: () async {
                 try {
@@ -83,26 +113,26 @@ class _LoginPageState extends State<LoginPage> {
               child: const Text("Login"),
             ),
 
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  print(emailController.text);
-                  print(passwordController.text);
-                  await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                    email: emailController.text.trim(),
-                    password: passwordController.text.trim(),
-                  );
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Homepage()));
-                  Fluttertoast.showToast(msg: 'SignUp successfully');
-
-                } catch (e) {
-                  print('Error while signingUp up: $e');
-                  Fluttertoast.showToast(msg: 'Error while signingUp in: $e');
-
-                }
-              },
-              child: const Text("SignUp"),
-            ),
+            // ElevatedButton(
+            //   onPressed: () async {
+            //     try {
+            //       print(emailController.text);
+            //       print(passwordController.text);
+            //       await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            //         email: emailController.text.trim(),
+            //         password: passwordController.text.trim(),
+            //       );
+            //       Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Homepage()));
+            //       Fluttertoast.showToast(msg: 'SignUp successfully');
+            //
+            //     } catch (e) {
+            //       print('Error while signingUp up: $e');
+            //       Fluttertoast.showToast(msg: 'Error while signingUp in: $e');
+            //
+            //     }
+            //   },
+            //   child: const Text("SignUp"),
+            // ),
 
           ],
         ),
