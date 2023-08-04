@@ -17,7 +17,6 @@ await Firebase.initializeApp();
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return  MultiProvider(
@@ -36,15 +35,15 @@ class MyApp extends StatelessWidget {
         home:  StreamBuilder<User?> (
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot){
-              print("Auth state changed: ${snapshot.connectionState}");
+              // print("Auth state changed: ${snapshot.connectionState}");
               if (snapshot.connectionState == ConnectionState.active){
                 if(snapshot.hasData) {
-                  return Homepage();
+                  return const Homepage();
                 } else {
-                  return  LoginPage();
+                  return  const LoginPage();
                 }
               }
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
 
             }
         ),

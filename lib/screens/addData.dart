@@ -1,19 +1,29 @@
 
+import 'dart:io';
+
+import 'package:first_flutter/screens/detail.dart';
 import 'package:first_flutter/screens/home.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/postProvider.dart';
 
 class PostScreen extends StatefulWidget {
+  const PostScreen({super.key});
+
   @override
   _PostScreenState createState() => _PostScreenState();
 }
 
 class _PostScreenState extends State<PostScreen> {
+  final LocalStorage userDetailsStorage = LocalStorage('local_storage');
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _bodyController = TextEditingController();
-  final TextEditingController _idController = TextEditingController();
+  bool activeConnection = false;
+
+
 
   void addPost() {
     final title = _titleController.text;
@@ -25,33 +35,62 @@ class _PostScreenState extends State<PostScreen> {
     _bodyController.clear();
   }
 
+  Future checkUserConnection() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        setState(() {
+          activeConnection = true;
+          addPost();
+        });
+      }
+    } on SocketException catch (_) {
+      setState(() {
+        activeConnection = false;
+        Fluttertoast.showToast(
+          msg: "Check your Internet connection",
+        );
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final posts = Provider.of<PostDataModelProvider>(context).posts;
+    userDetailsStorage.setItem("post", posts);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add New Post'),
-        leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Homepage())),),
+        title:const Text('Add New Post'),
+        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const Homepage())),),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              controller: _titleController,
-              decoration: InputDecoration(labelText: 'Title'),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(),
+              ),
+              child: TextField(
+                controller: _titleController,
+                decoration: const InputDecoration(labelText: 'Title', contentPadding: EdgeInsets.all(10)),
+              ),
             ),
-            TextField(
-              controller: _bodyController,
-              decoration: InputDecoration(labelText: 'Body'),
+            const SizedBox(height: 20,),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(),
+              ),
+              child: TextField(
+                controller: _bodyController,
+                decoration: const InputDecoration(labelText: 'Body', contentPadding: EdgeInsets.all(10)),
+              ),
             ),
-            TextField(
-              controller: _idController,
-              decoration: InputDecoration(labelText: 'Ui1'),
-            ),
+
             ElevatedButton(
               onPressed: () {
-                addPost();
+                checkUserConnection();
+                //addPost();
                 // print(_titleController.text);
                 // print(_bodyController.text);
                 // print(_idController.text);
@@ -64,7 +103,7 @@ class _PostScreenState extends State<PostScreen> {
                 // final postProvider = Provider.of<PostDataModelProvider>(context, listen: false);
                 // postProvider.addNewPost(postData);
               },
-              child: Text('Add Post'),
+              child: const Text('Add Post'),
             ),
 
 
@@ -72,11 +111,18 @@ class _PostScreenState extends State<PostScreen> {
               child: ListView.builder(
                 itemCount: posts.length,
                 itemBuilder: (context, index) {
-                  return Card(
-                    margin: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      title: Text(posts[index].title),
-                      subtitle: Text(posts[index].body),
+                  return InkWell(
+                    onTap: () {
+                      showDialog(context: context, builder: (BuildContext context) {
+                        return DetailPage(post : posts[index]);
+                      });
+                    },
+                    child: Card(
+                      color: Colors.white60,
+                      margin: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        title: Text("Title-> ${posts[index].title}"),
+                      ),
                     ),
                   );
                 },

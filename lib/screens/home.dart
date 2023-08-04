@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../api_services/ApiService.dart';
 import 'addData.dart';
@@ -17,16 +18,18 @@ class _HomepageState extends State<Homepage> {
   final ApiService apiService = ApiService(apiUrl: 'https://jsonplaceholder.typicode.com/posts');
   late Future<List<dynamic>> dataFuture;
 
-  void signUserOut(BuildContext context) async {
+  void signUserOut(context) async {
     try {
       await FirebaseAuth.instance.signOut();
-      print("Sign-out successful");
+      //print("Sign-out successful");
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const LoginPage()),
       );
+      Fluttertoast.showToast(msg: "Sign out Successfully");
     } catch (e) {
       print("Error during sign-out: $e");
+      Fluttertoast.showToast(msg: "Error during sign-out: $e");
     }
   }
 
@@ -42,6 +45,7 @@ class _HomepageState extends State<Homepage> {
     return  Scaffold(
       appBar: AppBar(
         title: const Text("Data"),
+        centerTitle: true,
         //leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPage())),),
         actions: [
           IconButton(onPressed: () => signUserOut(context), icon: const Icon(Icons.logout))
@@ -52,19 +56,19 @@ class _HomepageState extends State<Homepage> {
         future: dataFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error fetching data'));
+            return const Center(child: Text('Error fetching data'));
           } else {
             final data = snapshot.data;
             return ListView.builder(
               itemCount: data!.length,
               itemBuilder: (context, index) {
                 return Card(
-                  margin: EdgeInsets.all(10),
+                  margin: const EdgeInsets.all(10),
                   elevation: 5,
                   child: ListTile(
-                    title: Container(child: Text(data[index]['title'])),
+                    title: Text(data[index]['title']),
                     subtitle: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(data[index]['body']),
@@ -79,7 +83,7 @@ class _HomepageState extends State<Homepage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> PostScreen())),
         backgroundColor: Colors.green,
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.navigation),
       ),
     );
   }

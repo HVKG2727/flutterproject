@@ -9,21 +9,9 @@ import '../api_services/ApiService.dart';
 import '../models/postModelPage.dart';
 
 class PostDataModelProvider extends ChangeNotifier {
-  // final ApiService apiService;
-  //
-  // PostDataModelProvider({required this.apiService});
-  //
-  // Future<void> addNewPost(Map<String, dynamic> postData) async {
-  //   try {
-  //     final response = await apiService.postData(postData);
-  //     final newPost = PostDataModel.fromJson(response);
-  //     print('New Post Added: ${newPost.title}');
-  //   } catch (e) {
-  //     print('Error adding new post: $e');
-  //   }
-  // }
 
   final ApiService apiService;
+
 
   List<Post> _posts = [];
 

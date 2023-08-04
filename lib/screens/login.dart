@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'home.dart';
 
@@ -13,11 +13,11 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
-  final paswordController = TextEditingController();
+  final passwordController = TextEditingController();
   @override
   void dispose() {
     emailController.dispose();
-    paswordController.dispose();
+    passwordController.dispose();
 
     super.dispose();
   }
@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Assignment"),
+        title: const Text("Assignment"),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -42,14 +42,14 @@ class _LoginPageState extends State<LoginPage> {
                 width: MediaQuery.of(context).size.width * .8,
                 child: TextField(
                   controller: emailController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: "Email",
                     contentPadding: EdgeInsets.all(10)
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 20,),
+            const SizedBox(height: 20,),
             Center(
               child: Container(
                 decoration: BoxDecoration(
@@ -57,70 +57,52 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 width: MediaQuery.of(context).size.width * .8,
                 child: TextField(
-                  controller: paswordController,
-                  decoration: InputDecoration(
+                  controller: passwordController,
+                  decoration: const InputDecoration(
                     hintText: "Password",
                      contentPadding: EdgeInsets.all(10)
                   ),
                 ),
               ),
             ),
-            // ElevatedButton(onPressed: () {
-            //   print(emailController.text);
-            //   print(paswordController.text);
-            //   FirebaseAuth.instance.signInWithEmailAndPassword(email: emailController.text.trim(), password: paswordController.text.trim());
-            // }, child: Text("Login")),
             ElevatedButton(
               onPressed: () async {
                 try {
-                  print(emailController.text);
-                  print(paswordController.text);
                   await FirebaseAuth.instance.signInWithEmailAndPassword(
                     email: emailController.text.trim(),
-                    password: paswordController.text.trim(),
+                    password: passwordController.text.trim(),
                   );
-                  // Login successful, navigate to the homepage.
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => Homepage()),
-                  );
+
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Homepage()));
+                  Fluttertoast.showToast(msg: "Login Successfully");
                 } catch (e) {
                   print('Error while signing in: $e');
-                  // Handle the error appropriately, display a message to the user, etc.
+                  Fluttertoast.showToast(msg: 'Error while signing in: $e');
                 }
               },
-              child: Text("Login"),
+              child: const Text("Login"),
             ),
 
             ElevatedButton(
               onPressed: () async {
                 try {
                   print(emailController.text);
-                  print(paswordController.text);
+                  print(passwordController.text);
                   await FirebaseAuth.instance.createUserWithEmailAndPassword(
                     email: emailController.text.trim(),
-                    password: paswordController.text.trim(),
+                    password: passwordController.text.trim(),
                   );
-                  // Sign-up successful, navigate to the homepage.
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => Homepage()),
-                  );
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Homepage()));
+                  Fluttertoast.showToast(msg: 'SignUp successfully');
+
                 } catch (e) {
-                  print('Error while signing up: $e');
-                  // Handle the error appropriately, display a message to the user, etc.
+                  print('Error while signingUp up: $e');
+                  Fluttertoast.showToast(msg: 'Error while signingUp in: $e');
+
                 }
               },
-              child: Text("SignUp"),
+              child: const Text("SignUp"),
             ),
-
-
-
-            // ElevatedButton(onPressed: () {
-            //
-            //   FirebaseAuth.instance.createUserWithEmailAndPassword(email:  emailController.text.trim(), password:  paswordController.text.trim());
-            //
-            // }, child: Text("SignUp"))
 
           ],
         ),
